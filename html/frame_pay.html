@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-<div class="aui-content aui-margin-b-15">
+<!-- <div class="aui-content aui-margin-b-15">
     <ul class="aui-list aui-media-list">
         <li class="aui-list-item">
             <div class="aui-list-item-inner">
@@ -76,13 +76,46 @@
             </div>
         </li>
     </ul>
+</div> -->
+<div class="aui-content aui-margin-b-15" id="loadProjectList">
+    <template v-for="item in items">
+        <div class="aui-info aui-margin-t-10 aui-padded-l-10 aui-padded-r-10">
+            <div class="aui-info-item">
+                <img src="../image/demo2.png" style="width:1.5rem" class="aui-img-round" /><span class="aui-margin-l-5">{{item.company}}</span>
+            </div>
+            <div class="aui-info-item">{{item.addtime}}</div>
+        </div>
+    </template>
 </div>
 </body>
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript" src="../script/aui.js"></script>
+<script type="text/javascript" src="../script/vue.min.js"></script>
 <script type="text/javascript">
+    function fnLoadList() {
+        api.ajax({
+            url: 'http://192.168.0.2/api/project',
+            method: 'get',
+            data: {
+                values: { 
+                    valueName: 'haha'
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                var vm = new Vue({
+                    el:'#loadProjectList',
+                    data: {
+                        items:ret
+                    }
+                });
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
     apiready = function(){
-
+        fnLoadList();
     };
 </script>
 </html>

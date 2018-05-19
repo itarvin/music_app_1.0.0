@@ -12,33 +12,34 @@
     </style>
 </head>
 <body>
-    <section class="aui-content" id="list">
 
-        <template v-for="item in items">
-        <div class="aui-card-list" v-on:click="play(item.url,item.title)">
+<section class="aui-content" id="loadProjectList">
+
+    <template v-for="item in items">
+        
+        <div class="aui-card-list">
             <div class="aui-card-list-header">
                 {{item.title}}
             </div>
             <div class="aui-card-list-content">
-                <img v-bind:src="item.samllimg" />
+                <img src="../image/l2.png" />
             </div>
-            <div class="aui-card-list-footer">
-                {{item.addtime}}
+            <div class="aui-card-list-footer" v-html="item.content">
+                
             </div>
         </div>
-        </template>
-        <div class="aui-card-list-footer aui-text-center">
-            查看更多
-        </div>
-    </section>
+
+    </template>
+
+</section>
 </body>
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript" src="../script/aui.js"></script>
 <script type="text/javascript" src="../script/vue.min.js"></script>
 <script type="text/javascript">
-    function fnLoadList() {
+    function fnLoadContent(aid) {
         api.ajax({
-            url: 'http://192.168.0.2/api/music',
+            url: 'http://192.168.0.2/api/blogDetail/'+aid,
             method: 'get',
             data: {
                 values: { 
@@ -48,21 +49,9 @@
         }, function(ret, err) {
             if (ret) {
                 var vm = new Vue({
-                    el:'#list',
+                    el:'#loadProjectList',
                     data: {
                         items:ret
-                    },
-                    methods: {
-                        play: function(url,title) {
-                            api.openWin({
-                                name: 'music',
-                                url: './music.html',
-                                pageParam: {
-                                    url: url,
-                                    title:title
-                                }
-                            });
-                        }
                     }
                 });
             } else {
@@ -71,7 +60,8 @@
         });
     }
     apiready = function(){
-        fnLoadList();
+        var aid = api.pageParam.aid;
+        fnLoadContent(aid);
     };
 </script>
 </html>

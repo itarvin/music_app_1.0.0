@@ -175,7 +175,7 @@
         var isSame = function(doms, el){
             var i = 0, len = doms.length;
             for(i; i<len; i++){
-                if(doms[i].isEqualNode(el)){
+                if(doms[i].isSameNode(el)){
                     return doms[i];
                 }
             }
@@ -213,7 +213,7 @@
 
             return mark;
         }
-
+        
     };
     u.remove = function(el){
         if(el && el.parentNode){
@@ -331,7 +331,7 @@
                     break;
             }
         }
-
+        
     };
     u.prepend = function(el, html){
         if(!u.isElement(el)){
@@ -474,40 +474,24 @@
             ls.clear();
         }
     };
-
-
-    /*by king*/
     u.fixIos7Bar = function(el){
-        if(!u.isElement(el)){
-            console.warn('$api.fixIos7Bar Function need el param, el param must be DOM Element');
-            return;
-        }
-        var strDM = api.systemType;
-        if (strDM == 'ios') {
-            var strSV = api.systemVersion;
-            var numSV = parseInt(strSV,10);
-            var fullScreen = api.fullScreen;
-            var iOS7StatusBarAppearance = api.iOS7StatusBarAppearance;
-            if (numSV >= 7 && !fullScreen && iOS7StatusBarAppearance) {
-                el.style.paddingTop = '20px';
-            }
-        }
+        return u.fixStatusBar(el);
     };
     u.fixStatusBar = function(el){
         if(!u.isElement(el)){
             console.warn('$api.fixStatusBar Function need el param, el param must be DOM Element');
-            return;
+            return 0;
         }
-        var sysType = api.systemType;
-        if(sysType == 'ios'){
-            u.fixIos7Bar(el);
-        }else if(sysType == 'android'){
-            var ver = api.systemVersion;
-            ver = parseFloat(ver);
-            if(ver >= 4.4){
-                el.style.paddingTop = '25px';
-            }
+        el.style.paddingTop = api.safeArea.top + 'px';
+        return el.offsetHeight;
+    };
+    u.fixTabBar = function(el){
+        if(!u.isElement(el)){
+            console.warn('$api.fixTabBar Function need el param, el param must be DOM Element');
+            return 0;
         }
+        el.style.paddingBottom = api.safeArea.bottom + 'px';
+        return el.offsetHeight;
     };
     u.toast = function(title, text, time){
         var opts = {};
@@ -598,7 +582,7 @@
     };
 
 /*end*/
-
+    
 
     window.$api = u;
 
