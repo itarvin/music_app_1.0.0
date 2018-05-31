@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>Hello Itarvin</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-slide.css" />
+	<style type='text/css'>
+        html,body {height:100%;}
+        #aui-slide3 {padding-top: 60px;}
+    </style>
+</head>
+<body>
+<div id="aui-slide3">
+    <div class="aui-slide-wrap" >
+        <div class="aui-slide-node bg-dark">
+            <img src="../../image/l1.png" />
+        </div>
+        <div class="aui-slide-node bg-dark">
+            <img src="../../image/l2.png" />
+        </div>
+        <div class="aui-slide-node bg-dark">
+            <img src="../../image/l3.png" />
+        </div>
+        
+    </div>
+    <div class="aui-slide-page-wrap"><!--分页容器--></div>
+</div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/aui-slide.js"></script>
+<script type="text/javascript">
+    
+apiready = function(){
+
+};
+var slide3 = new auiSlide({
+    container:document.getElementById("aui-slide3"),
+    // "width":300,
+    "height":240,
+    "speed":500,
+    "autoPlay": 2000, //自动播放
+    "loop":true,
+    "pageShow":true,
+    "pageStyle":'line',
+    'dotPosition':'center'
+})
+console.log(slide3.pageCount());
+</script>
+</html>

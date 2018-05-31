@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>Hello Itarvin</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style type='text/css'>
+        html,body {height:100%;}
+    </style>
+</head>
+<body>
+<section class="aui-content">
+    <div class="aui-timeline" id="loadNewsList">
+        <template v-for="item in items">
+            <div class="aui-timeline-item-header">{{item.createtime}}</div>
+            <div class="aui-timeline-item" v-on:click="play(item.id)">
+                <div class="aui-timeline-item-label aui-bg-info text-light">NO.{{item.id}}</div>
+                <div class="aui-timeline-item-inner">
+                    <div class="aui-card-list">
+                        <div class="aui-card-list-header aui-border-b">
+                            <div>{{item.title}}</div>
+                            <i class="aui-iconfont aui-icon-star aui-text-danger"></i>
+                        </div>
+                        <div class="aui-card-list-content-padded">
+                            {{item.depict}}
+                            <img :src="item.picture" />
+                        </div>
+                        <div class="aui-card-list-footer aui-border-t aui-font-size-12">
+                            <div>{{item.region}}{{item.city}}</div>
+                            <div><i class="aui-iconfont aui-icon-laud aui-font-size-14"></i> {{item.hits}}</div>
+                            <div><i class="aui-iconfont aui-icon-star aui-font-size-14"></i> 888</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+
+</section>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript">
+    var skip=0,LIMIT=2;
+    var vm;
+    function fnLoadList(isPull) {
+        api.ajax({
+            url: 'http://119.23.246.10/api/news',
+            method: 'get',
+            data: {
+                values: { 
+                    skip:skip,
+                    limit:LIMIT
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (isPull) {
+                    if(ret.length < LIMIT) {
+                        skip += ret.length;
+                    }else {
+                        skip += LIMIT;
+                    }
+                    // laod
+                    for(var i=0; i<ret.length; i++){
+                        vm.items.unshift(ret[i]);
+                    }
+                    return;
+                }
+                vm = new Vue({
+                    el:'#loadNewsList',
+                    data: {
+                        items:ret
+                    },
+                    methods: {
+                        play: function(aid) {
+                            api.openWin({
+                                name: 'newsDetail',
+                                url: './newsDetail.html',
+                                pageParam: {
+                                    aid: aid
+                                }
+                            });
+                        }
+                    }
+                });
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
+    apiready = function(){
+        fnLoadList();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/load.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function(ret, err){
+            // load 
+            fnLoadList(true);
+            // stop 
+            api.refreshHeaderLoadDone();
+        });
+    };
+</script>
+</html>

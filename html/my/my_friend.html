@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>Hello Itarvin</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style type='text/css'>
+        html,body {height:100%;}
+    </style>
+</head>
+<body>
+<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-media-list" id="loadFriendList">
+        <li class="aui-list-header">
+            朋友列表
+        </li>
+        <template v-for="item in items">
+        	<li class="aui-list-item aui-list-item-middle" v-on:click="play(item.id)">
+	            <div class="aui-media-list-item-inner">
+	                <div class="aui-list-item-media" style="width: 3rem;">
+	                    <img :src="item.logo" class="aui-img-round aui-list-img-sm" >
+	                </div>
+	                <div class="aui-list-item-inner aui-list-item-arrow">
+	                    <div class="aui-list-item-text">
+	                        <div class="aui-list-item-title aui-font-size-14">{{item.username}}</div>
+	                        <div class="aui-list-item-right">{{item.lasttime}}</div>
+	                    </div>
+	                    <div class="aui-list-item-text">
+	                        {{item.email}}
+	                    </div>
+	                </div>
+	            </div>
+	        </li>
+        </template>
+    </ul>
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript">
+
+    var skip=0,LIMIT=2;
+    var vm;
+    function fnLoadList(isPull) {
+    	var identity = $api.getStorage('identity');
+		if(identity  == undefined){
+			alert('请先登录你的账户!');
+		}
+        var result = execu();
+        alert(result);
+        if(result != ''){
+            vm = new Vue({
+                el:'#loadFriendList',
+                data: {
+                    items:result
+                },
+                methods: {
+                    play: function(uid) {
+                        api.openWin({
+                            name: 'my_chat',
+                            url: './my_chat.html',
+                            pageParam: {
+                                uid: uid
+                            }
+                        });
+                    }
+                }
+            });
+        }else {
+            api.ajax({
+            url: 'http://192.168.0.2/api/user/getmyuser',
+            method: 'post',
+            data: {
+                values: {
+                    identity:identity,
+                    skip:skip,
+                    limit:LIMIT
+                }
+            }
+            }, function(ret, err) {
+                if (ret) {
+                    if (isPull) {
+                        if(ret.length < LIMIT) {
+                            skip += ret.length;
+                        }else {
+                            skip += LIMIT;
+                        }
+                        // laod
+                        for(var i=0; i<ret.length; i++){
+                            vm.items.unshift(ret[i]);
+                        }
+                        return;
+                    }
+                    if(ret.code == 200){
+                        vm = new Vue({
+                            el:'#loadFriendList',
+                            data: {
+                                items:ret.msg
+                            },
+                            methods: {
+                                play: function(uid) {
+                                    api.openWin({
+                                        name: 'my_chat',
+                                        url: './my_chat.html',
+                                        pageParam: {
+                                            uid: uid
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }else {
+                        alert(ret.msg);
+                    }
+                } else {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+    }
+    apiready = function(){
+        fnLoadList();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/load.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function(ret, err){
+            // load 
+            fnLoadList(true);
+            // stop 
+            api.refreshHeaderLoadDone();
+        });
+    };
+    function execu(data)
+    {
+        var db = api.require('db');
+        db.selectSql({
+            name: 'my_info',
+            sql: 'SELECT * FROM i_friend'
+        }, function(ret, err){        
+            if( ret.status ){
+                if(data != undefined){
+                    insertsql(data);
+                }else {
+                    return ret;
+                }
+            }else{
+                newclass(data);
+            }
+        });
+    }
+    // 创建
+    function newclass(data)
+    {
+        var db = api.require('db');
+        var sql="CREATE TABLE i_friend(Id_P int, username varchar(255), logo varchar(255), lasttime varchar(50))";
+        db.executeSql({
+             name:'my_info',
+             sql:sql
+         },function(ret,err){
+            if( ret.status ){
+                insertsql(data)
+            }else{
+                alert( JSON.stringify( err ) );
+            }
+        });
+    }
+
+    // insert
+    function insertsql(data)
+    {
+        var db = api.require('db');
+        var sql='INSERT INTO i_friend(Id_P,username,logo,lasttime) VALUES("'+data.id+'","'+data.username+'","'+data.logo+'","'+data.lasttime+'")';
+        db.executeSql({
+            name:'my_info',
+            sql:sql,
+        },function(ret,err){
+            if( ret.status ){
+                return data;
+            }else{
+                alert('请重新登录！');
+            }
+        });
+    }
+</script>
+</html>

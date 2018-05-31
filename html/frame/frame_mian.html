@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>Hello Itarvin</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style type='text/css'>
+        html,body {height:100%;}
+        .aui-card-list-content img{ height: 280px;clip:rect(20px 100px 50px 20px)}
+    </style>
+</head>
+<body>
+    <section class="aui-content" id="list">
+
+        <template v-for="item in items">
+        <div class="aui-card-list" v-on:click="play(item.url,item.title)">
+            <div class="aui-card-list-header">
+                {{item.title}}
+            </div>
+            <div class="aui-card-list-content">
+                <img :src="item.smallimg" />
+            </div>
+            <div class="aui-card-list-footer">
+                {{item.addtime}}
+            </div>
+        </div>
+        </template>
+    </section>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript">
+    var skip=0,LIMIT=2;
+    var vm;
+    function fnLoadList(isPull) {
+        api.ajax({
+            url: 'http://119.23.246.10/api/music',
+            method: 'get',
+            data: {
+                values: { 
+                    skip:skip,
+                    limit:LIMIT
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (isPull) {
+                    if(ret.length < LIMIT) {
+                        skip += ret.length;
+                    }else {
+                        skip += LIMIT;
+                    }
+                    // laod
+                    for(var i=0; i<ret.length; i++){
+                        vm.items.unshift(ret[i]);
+                    }
+                    return;
+                }
+                vm = new Vue({
+                    el:'#list',
+                    data: {
+                        items:ret
+                    },
+                    methods: {
+                        play: function(url,title) {
+                            api.openWin({
+                                name: 'music',
+                                url: './music.html',
+                                pageParam: {
+                                    url: url,
+                                    title:title
+                                }
+                            });
+                        }
+                    }
+                });
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
+    apiready = function(){
+        fnLoadList();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/load.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function(ret, err){
+            // load 
+            fnLoadList(true);
+            // stop 
+            api.refreshHeaderLoadDone();
+        });
+    };
+</script>
+</html>

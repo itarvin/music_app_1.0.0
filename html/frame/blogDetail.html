@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>Hello Itarvin</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style type='text/css'>
+        html,body {height:100%;}
+    </style>
+</head>
+<body>
+<header class="aui-bar aui-bar-nav" style="padding-top:25px;" onclick="api.closeWin()">
+    <a class="aui-pull-left">
+        <span class="aui-iconfont aui-icon-left"></span>
+    </a>
+    <div class="aui-title">列表详情</div>
+</header>
+<section class="aui-content" id="loadBlogList">
+    <template v-for="item in items">
+        <div class="aui-card-list">
+            <div class="aui-card-list-header aui-card-list-user aui-border-b">
+                <div class="aui-card-list-user-avatar">
+                    <img src="../../image/demo4.png" class="aui-img-round" />
+                </div>
+                <div class="aui-card-list-user-name">
+                    <div>AUI</div>
+                    <small>{{item.createtime}}</small>
+                </div>
+                <div class="aui-card-list-user-info">{{item.region}}{{item.city}}</div>
+            </div>
+            <div class="aui-card-list-content-padded">
+                {{item.title}}
+                <img :src="item.picture" />
+            </div>
+            <div class="aui-card-list-footer aui-border-t" >
+                <div v-html="item.content">
+                    {{ item.content }}
+                </div>
+            </div>
+        </div>
+    </template>
+</section>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript">
+    function fnLoadContent(aid) {
+        api.ajax({
+            url: 'http://119.23.246.10/api/blogDetail/'+aid,
+            method: 'get',
+            data: {
+                values: { 
+                    valueName: 'haha'
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                var vm = new Vue({
+                    el:'#loadBlogList',
+                    data: {
+                        items:ret
+                    }
+                });
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
+    apiready = function(){
+        var aid = api.pageParam.aid;
+        fnLoadContent(aid);
+    };
+</script>
+</html>

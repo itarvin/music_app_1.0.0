@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>Hello Itarvin</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style type='text/css'>
+        html,body {height:100%;}
+    </style>
+</head>
+<body>
+<section class="aui-content">
+        <ul class="aui-list" id="loadProjectList">
+            <template v-for="item in items">
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title aui-text-info">{{item.company}}</div>
+                        <div class="aui-list-item-right">{{item.addtime}}</div>
+                    </div>
+                </li>
+            </template>
+        </ul>
+    </section>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript">
+    var skip=0,LIMIT=2;
+    var vm;
+    function fnLoadList(isPull) {
+        api.ajax({
+            url: 'http://119.23.246.10/api/project',
+            method: 'get',
+            data: {
+                values: {
+                    skip:skip,
+                    limit:LIMIT
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (isPull) {
+                    if(ret.length < LIMIT) {
+                        skip += ret.length;
+                    }else {
+                        skip += LIMIT;
+                    }
+                    // laod
+                    for(var i=0; i<ret.length; i++){
+                        vm.items.unshift(ret[i]);
+                    }
+                    return;
+                }
+                vm = new Vue({
+                    el:'#loadProjectList',
+                    data: {
+                        items:ret
+                    }
+                });
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
+    apiready = function(){
+        fnLoadList();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/load.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function(ret, err){
+            // load
+            fnLoadList(true);
+            // stop
+            api.refreshHeaderLoadDone();
+        });
+    };
+</script>
+</html>

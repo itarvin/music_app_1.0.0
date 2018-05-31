@@ -15,43 +15,60 @@
     </style>
 </head>
 <body class="wrap">
+<header id="aui-header" class="aui-bar aui-bar-nav aui-bar-dark">
+    <span id="header-title">Hello Itarvin</span>
+</header>
 
-    <header id="aui-header" class="aui-bar aui-bar-nav aui-bar-dark">
-        <span id="header-title">Hello Itarvin</span>
-    </header>
-
-    <footer class="aui-bar aui-bar-tab" id="footer">
-        <div id="mian" class="aui-bar-tab-item" tapmode>
-            <i class="aui-iconfont aui-icon-home"></i>
-            <div class="aui-bar-tab-label" onclick="randomSwitchBtn(this,'首页',0)">首页</div>
-        </div>
-        <div id="pay" class="aui-bar-tab-item" tapmode>
-            <i class="aui-iconfont aui-icon-star"></i>
-            <div class="aui-bar-tab-label" onclick="randomSwitchBtn(this,'收藏',1)">收藏</div>
-        </div>
-        <div id="blog" class="aui-bar-tab-item" tapmode>
-            <div class="aui-badge">99</div>
-            <i class="aui-iconfont aui-icon-comment"></i>
-            <div class="aui-bar-tab-label" onclick="randomSwitchBtn(this,'博文',2)">博文</div>
-        </div>
-        <div id="my" class="aui-bar-tab-item" tapmode>
-            <div class="aui-dot"></div>
-            <i class="aui-iconfont aui-icon-my"></i>
-            <div class="aui-bar-tab-label" onclick="randomSwitchBtn(this,'我的',3)">我的</div>
-        </div>
-    </footer>
+<footer class="aui-bar aui-bar-tab" id="footer">
+    <div id="mian" class="aui-bar-tab-item" tapmode>
+        <i class="aui-iconfont aui-icon-home"></i>
+        <div class="aui-bar-tab-label" onclick="randomSwitchBtn(this,'首页',0)">首页</div>
+    </div>
+    <div id="active" class="aui-bar-tab-item" tapmode>
+        <i class="aui-iconfont aui-icon-star"></i>
+        <div class="aui-bar-tab-label" onclick="randomSwitchBtn(this,'动态',1)">动态</div>
+    </div>
+    <div id="blog" class="aui-bar-tab-item" tapmode>
+        <i class="aui-iconfont aui-icon-comment"></i>
+        <div class="aui-bar-tab-label" onclick="randomSwitchBtn(this,'博文',2)">博文</div>
+    </div>
+    <div id="my" class="aui-bar-tab-item" tapmode>
+        <div class="aui-dot"></div>
+        <i class="aui-iconfont aui-icon-my"></i>
+        <div class="aui-bar-tab-label" onclick="randomSwitchBtn(this,'我的',3)">我的</div>
+    </div>
+</footer>
 </body>
 <script type="text/javascript" src="./script/api.js"></script>
 <script type="text/javascript" src="./script/aui.js"></script>
 <script type="text/javascript">
     apiready = function() {
 
-        var header = $api.byId('aui-header'); // 获取 header 标签元素
+        var db = api.require('db');
+
+        db.openDatabase({
+            name: 'my_info'
+        }, function(ret, err) {
+            if (ret.status) {
+                
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+
+        var header = $api.byId('aui-header'); 
+        // 获取 header 标签元素
+
         $api.fixStatusBar(header);
+
         var headerPos = $api.offset(header);
+
         var body_h = $api.offset($api.dom('body')).h;
+
         var footer_h = $api.offset($api.byId('footer')).h;
+
         api.openFrameGroup ({
+
             name: 'footer_tab_demo',
             scrollEnabled:true,
             rect:{x:0, y:headerPos.h, w:'auto', h:body_h - headerPos.h - footer_h},
@@ -60,19 +77,19 @@
             frames:
             [{
                 name: 'main',
-                url: './html/frame_mian.html',
+                url: './html/frame/frame_mian.html',
                 bounces:false
             },{
-                name: 'pay',
-                url: './html/frame_pay.html',
+                name: 'active',
+                url: './html/frame/frame_active.html',
                 bounces:false
             },{
                 name: 'blog',
-                url: './html/frame_blog.html',
+                url: './html/frame/frame_blog.html',
                 bounces:false
             },{
                 name: 'my',
-                url: './html/frame_my.html',
+                url: './html/frame/frame_my.html',
                 bounces:false
             }]
         }, function(ret, err){
@@ -85,8 +102,8 @@
                 $api.text($api.byId('header-title'),'首页');
                 $api.addCls($api.byId('main'), 'aui-active');
             }else if(index==1){
-                $api.text($api.byId('header-title'),'收藏');
-                $api.addCls($api.byId('pay'), 'aui-active');
+                $api.text($api.byId('header-title'),'动态');
+                $api.addCls($api.byId('active'), 'aui-active');
             }else if(index==2){
                 $api.text($api.byId('header-title'),'博文');
                 $api.addCls($api.byId('blog'), 'aui-active');

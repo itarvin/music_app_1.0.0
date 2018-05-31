@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>Hello Itarvin</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style type='text/css'>
+        html,body {height:100%;}
+        #logo {text-align:center; padding:50px 0;margin:auto;}
+        #logo img {border-radius:100px; width:100px; height:100px;display: inline;}
+    </style>
+</head>
+<body>
+<header class="aui-bar aui-bar-nav" style="padding-top:25px;" onclick="api.closeWin()" id="aui-header">
+    <a class="aui-pull-left">
+        <span class="aui-iconfont aui-icon-left"></span>
+    </a>
+    <div class="aui-title">列表详情</div>
+</header>
+
+<div id='logo'>
+    <img src='../../image/logo.jpg' />
+</div>
+<section class="aui-grid aui-margin-b-15">
+    <div class="aui-row">
+        <div class="aui-col-xs-4" onclick="chooseTip(this,'setting',0)">
+            <i class="aui-iconfont aui-icon-gear"></i>
+            <div class="aui-grid-label">设置</div>
+        </div>
+
+        <div class="aui-col-xs-4" onclick="chooseTip(this,'friend',1)">
+            <i class="aui-iconfont aui-icon-comment"></i>
+            <div class="aui-grid-label">friend</div>
+        </div>
+
+        <div class="aui-col-xs-4" onclick="chooseTip(this,'mail',2)" >
+            <i class="aui-iconfont aui-icon-mail"></i>
+            <div class="aui-grid-label">mail</div>
+        </div>
+
+        <div class="aui-col-xs-4" onclick="chooseTip(this,'image',3)" >
+            <i class="aui-iconfont aui-icon-image"></i>
+            <div class="aui-grid-label">image</div>
+        </div>
+
+        <div class="aui-col-xs-4" onclick="chooseTip(this,'scrapy',4)">
+            <i class="aui-iconfont aui-icon-flag"></i>
+            <div class="aui-grid-label">爬虫数据</div>
+        </div>
+
+        <div class="aui-col-xs-4" onclick="chooseTip(this,'me',5)" >
+            <i class="aui-iconfont aui-icon-my"></i>
+            <div class="aui-grid-label">Me</div>
+        </div>
+    </div>
+</section>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui.js"></script>
+<script type="text/javascript">
+    
+apiready = function(){
+
+};
+function chooseTip(obj,name,id){
+     var header = $api.byId('aui-header'); // 获取 header 标签元素
+    $api.fixStatusBar(header);
+
+    var headerPos = $api.offset(header);
+
+    var body_h = $api.offset($api.dom('body')).h;
+
+    if(id == 0){
+        api.openFrame({
+            name: 'my_setting', 
+            url: './my_setting.html',
+            rect: {//位置及大小参数  
+                x:0, 
+                y:headerPos.h, 
+                w:'auto', 
+                h:body_h - headerPos.h
+            },
+            pageParam:{  
+                name:'test'  
+            }
+        });
+    }else if (id == 1) {
+        api.openFrame({
+            name: 'my_friend', 
+            url: './my_friend.html',
+            rect: {//位置及大小参数  
+                x:0, 
+                y:headerPos.h, 
+                w:'auto', 
+                h:body_h - headerPos.h
+            },
+            pageParam:{  
+                name:'test'  
+            }
+        });
+    }else if (id == 2) {
+        api.openFrame({
+            name: 'my_mail', 
+            url: './my_mail.html',
+            rect: {//位置及大小参数  
+                x:0, 
+                y:headerPos.h, 
+                w:'auto', 
+                h:body_h - headerPos.h
+            },
+            pageParam:{  
+                name:'test'  
+            }
+        });
+    }else if (id == 3) {
+        api.openFrame({
+            name: 'my_image', 
+            url: './my_image.html',
+            rect: {//位置及大小参数  
+                x:0, 
+                y:headerPos.h, 
+                w:'auto', 
+                h:body_h - headerPos.h
+            },
+            pageParam:{  
+                name:'test'  
+            }
+        });
+    }else if (id == 4) {
+        api.openFrame({
+            name: 'my_scrapy', 
+            url: './my_scrapy.html',
+            rect: {//位置及大小参数  
+                x:0, 
+                y:headerPos.h, 
+                w:'auto', 
+                h:body_h - headerPos.h
+            },
+            pageParam:{  
+                name:'test'  
+            }
+        });
+    }else if (id == 5) {
+        api.openFrame({
+            name: 'my_me', 
+            url: './my_me.html',
+            rect: {//位置及大小参数  
+                x:0, 
+                y:headerPos.h, 
+                w:'auto', 
+                h:body_h - headerPos.h
+            },
+            pageParam:{  
+                name:'test'  
+            }
+        });
+    }
+}
+</script>
+</html>
